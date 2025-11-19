@@ -1,0 +1,81 @@
+# Mainpipe Pipeline Configuration
+
+# Input/Output
+input_file: "../Mainpipe Data v1.jsonl"
+output_dir: "output"
+reports_dir: "reports"
+
+# Text filtering
+min_char_length: 80
+max_char_length: 100000
+min_token_length: 20
+max_token_length: 8192
+
+# Language detection
+target_language: "en"
+
+# Deduplication
+deduplication_method: "minhash"  # Options: "minhash", "hash", "none"
+minhash_num_perm: 128
+
+# Safety filtering (lightweight rule-based)
+safety_enabled: true
+safety_max_chars_scanned: 10000  # PII detector upper bound (unchanged)
+safety_toxicity_threshold: 1.5  # Absolute sum of rule weights; > threshold ⇒ toxic
+safety_toxicity_char_cap: 768  # Rules scan at most 768 chars; toxic spans trigger locally
+safety_toxicity_window_chars: 512
+safety_toxicity_window_stride: 0.5
+safety_toxicity_window_padding: 64
+safety_toxicity_max_windows: 3
+safety_toxicity_suspect_windows: 5
+safety_prefilter_enabled: true
+safety_prefilter_safe_skip_toxicity: true
+safety_uppercase_ratio_limit: 0.65
+safety_symbol_ratio_limit: 0.45
+safety_max_repeated_chars: 4
+safety_uppercase_penalty: 0.5
+safety_symbol_penalty: 0.4
+safety_repeat_penalty: 0.4
+safety_repeated_punct_penalty: 0.3
+safety_obfuscated_profanity_penalty: 0.6
+safety_blocklist:
+  - "hate"
+  - "kill"
+  - "murder"
+  - "suicide"
+  - "bomb"
+  - "terror"
+  - "rape"
+safety_enable_pii: true
+safety_pii_entities: ["EMAIL_ADDRESS", "PHONE_NUMBER", "CREDIT_CARD", "SSN", "IP_ADDRESS"]
+safety_pii_max_matches: 2
+
+# Export settings
+shard_size: 10000
+export_clean_shards: true
+export_tokenized_shards: true
+export_training_ready: true
+compress_output: false
+
+# Tokenization
+tokenizer_encoding: "cl100k_base"  # OpenAI's tiktoken encoding
+
+# Inspector settings
+generate_visualizations: true
+
+# Perplexity evaluation settings
+calculate_perplexity: true  # Set to true to compute perplexity (slower)
+perplexity_model_name: "gpt2"  # HuggingFace model name (default: GPT-2 small)
+perplexity_sample_size: 1000  # Number of samples to evaluate
+perplexity_device: "auto"  # Device preference: "auto", "cpu", "cuda", "mps"
+perplexity_max_length: 1024  # Maximum sequence length for model (GPT-2 context window)
+perplexity_seed: 42  # Random seed for sampling
+
+# Training export settings
+training_block_size: 2048  # Fixed block size for concatenation strategy
+training_chunking_strategy: "concatenation"  # Strategy A: concatenation → fixed blocks
+training_shuffle_seed: 42  # Configurable shuffle seed for reproducibility
+training_eos_token: 100257  # EOS token ID for cl100k_base
+training_shard_size: 10000  # Samples per shard
+training_shard_max_size_mb: 500  # Max compressed size per shard (MB)
+
